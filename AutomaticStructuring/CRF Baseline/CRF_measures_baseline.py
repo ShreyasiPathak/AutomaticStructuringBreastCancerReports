@@ -1,6 +1,9 @@
 import string
 import numpy as np
 import sklearn
+import seaborn as sns
+import matplotlib.pyplot as plt
+import operator
 from sklearn.model_selection import cross_val_predict
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
@@ -11,7 +14,7 @@ from sklearn_crfsuite import metrics
 from sklearn_crfsuite.utils import flatten
 from sklearn.metrics import precision_recall_fscore_support
 
-def tokenLevel_measures(predictedY,trueY, tokenList,label_dic):
+def tokenLevel_measures(predictedY,trueY, tokenList,label_dic,conf_mat_agg):
     dic_tokenmeasure={}
     predictedYflat1=[]
     trueYflat1=[]
@@ -27,16 +30,21 @@ def tokenLevel_measures(predictedY,trueY, tokenList,label_dic):
             trueYflat1.append(labelSplitTrue[len(labelSplitTrue)-1])
         
     labels1=list(np.unique(trueYflat1))
-    labels1.remove('O')
+    #labels1.remove('O')
     labels2=list(np.unique(trueYflat1))
-    labels2.remove('O')
+    #labels2.remove('O')
     measuresprs=precision_recall_fscore_support(trueYflat1,predictedYflat1,labels=labels1)
     #print measuresprs[0]
+    if label_dic=={}:
+        count=0
+    else:
+        count=len(list(label_dic.iteritems()))
     for i in range(len(labels2)):
-        if measuresprs[3][i]<=10:
-            labels1.remove(labels2[i])
+        #if measuresprs[3][i]<=10:
+        #    labels1.remove(labels2[i])
         if not label_dic.has_key(labels2[i]):
-            label_dic[labels2[i]]=[[],[0]]
+            label_dic[labels2[i]]=[[],[0],[count]]
+            count=count+1
         label_dic[labels2[i]][0].append(measuresprs[2][i])
         label_dic[labels2[i]][1]=label_dic[labels2[i]][1]+measuresprs[3][i]
             #measuresprs1=zip(labels1,measuresprs[0],measuresprs[1],measuresprs[2],measuresprs[3])
@@ -60,11 +68,16 @@ def tokenLevel_measures(predictedY,trueY, tokenList,label_dic):
     classificationReport=classification_report(trueYflat1, predictedYflat1, labels=labels1, digits=3)
     print classificationReport
     conf_mat=confusion_matrix(trueYflat1,predictedYflat1, labels=labels1)
+    for i in range(len(labels2)):
+        for j in range(len(labels2)):
+            conf_mat_agg[label_dic[labels2[i]][2][0],label_dic[labels2[j]][2][0]]=conf_mat_agg[label_dic[labels2[i]][2][0],label_dic[labels2[j]][2][0]]+conf_mat[i][j]
     for i in range(len(labels1)):
         dic_tokenmeasure[labels1[i]]=[measuresprs[0][i],measuresprs[1][i],measuresprs[2][i],measuresprs[3][i]]
     #out.write(str(labels1)+"\n")
     #for i in range(len(conf_mat)):
     #    out.write(str(conf_mat[i])+"\n")
+    #print conf_mat_visual
+    #print type(conf_mat)
     #print np.sum(conf_mat[1,:])
     accuracy=accuracy_score(trueYflat1, predictedYflat1)
     #print measuresprs1
@@ -135,6 +148,7 @@ def partialPhraseLevel_MainStep(phraseList):
         if dice_coeff==1.0:
             complete_accuracy_dic[Truelabel]=complete_accuracy_dic.get(Truelabel)+1
     for key in similarity_dic.iterkeys():
+        print key, len(similarity_dic[key])
         #partial_accuracy_dic[key]=[accuracy_dic[key],len(similarity_dic[key]),float(accuracy_dic[key])/len(similarity_dic[key])]
         partial_accuracy_dic[key]=float(partial_accuracy_dic[key])/len(similarity_dic[key])
         complete_accuracy_dic[key]=float(complete_accuracy_dic[key])/len(similarity_dic[key])
