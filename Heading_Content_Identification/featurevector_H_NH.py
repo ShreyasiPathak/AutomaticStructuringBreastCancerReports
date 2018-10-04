@@ -11,6 +11,10 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score
+import matplotlib
+import matplotlib.pyplot as plt
+
+import confusionmatrix_heatmap
 
 def get_text_length(x):
     ar=np.array([np.log10(len(t)) for t in x]).reshape(-1, 1)
@@ -105,7 +109,11 @@ def results(predictTestLabel, trueTestLabel):
     print "Accuracy:",metrics.accuracy_score(trueTestLabel, predictTestLabel), accuracy
     print "F1_micro", f1_score(trueTestLabel, predictTestLabel, average="micro")
     print "Test result:",metrics.classification_report(trueTestLabel, predictTestLabel)
-    print "Confusion matrix:",metrics.confusion_matrix(trueTestLabel, predictTestLabel)
+    conf_mat=metrics.confusion_matrix(trueTestLabel, predictTestLabel)
+    print conf_mat
+    class_names=['Heading','Not Heading','Title']
+    fig=confusionmatrix_heatmap.print_confusion_matrix(conf_mat,class_names)
+    fig.savefig('confMat_H_NH_SVM.pdf',bbox_inches="tight")
 
 sentence=[]
 label=[]
@@ -132,12 +140,12 @@ for row in fRead:
             sent=[li]
             f1Write.writerow(sent)'''
 
-predictTestLabelNB=naivebayesfunc(sentence, label)
-print "Naive Bayes"
-results(predictTestLabelNB, label)
+#predictTestLabelNB=naivebayesfunc(sentence, label)
+#print "Naive Bayes"
+#results(predictTestLabelNB, label)
 predictTestLabelSVM=svmfunc(sentence, label)
 print "SVM"
 results(predictTestLabelSVM, label)
-predictTestLabelRF=randomforest(sentence, label)
-print "RF"
-results(predictTestLabelRF, label)
+#predictTestLabelRF=randomforest(sentence, label)
+#print "RF"
+#results(predictTestLabelRF, label)

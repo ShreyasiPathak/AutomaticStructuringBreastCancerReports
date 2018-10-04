@@ -11,9 +11,14 @@ from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.preprocessing import FunctionTransformer
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import f1_score
+import matplotlib
+import matplotlib.pyplot as plt
+
+import confusionmatrix_heatmap
 
 def get_text_length(x):
-    ar=np.array([np.log10(len(t)) for t in x]).reshape(-1, 1)
+    #ar=np.array([np.log10(len(t)) for t in x]).reshape(-1, 1)
+    ar=np.array([len(t) for t in x]).reshape(-1, 1)
     #maxAr=np.amax(ar)
     #return ar/float(maxAr)
     return ar
@@ -28,10 +33,10 @@ def naivebayesfunc(trainData, trainLabel):
         ('features',FeatureUnion([
             ('text',Pipeline([
                 ('vectorizer', CountVectorizer(max_df=0.6)),
-                ('tfidf', TfidfTransformer())
-            ]))
+                #('tfidf', TfidfTransformer())
+            ])),
             #('length', Pipeline([
-            #        ('count', FunctionTransformer(get_text_length, validate=False)),
+            ('count', FunctionTransformer(get_text_length, validate=False))
             #]))
         ])),
         ('clf', MultinomialNB())
@@ -50,9 +55,9 @@ def svmfunc(trainData, trainLabel):
         ('features',FeatureUnion([
             ('text',Pipeline([
                 ('vectorizer', CountVectorizer(max_df=0.6)),
-                ('tfidf', TfidfTransformer())
-            ]))
-            #('count', FunctionTransformer(get_text_length, validate=False))
+                #('tfidf', TfidfTransformer())
+            ])),
+            ('count', FunctionTransformer(get_text_length, validate=False))
         ])),
         ('clf', SGDClassifier(loss='hinge', penalty='l2',alpha=1e-3, random_state=42,max_iter=5, tol=None))
     ])
@@ -76,9 +81,12 @@ def results(predictTestLabel, trueTestLabel):
     accuracy=np.mean(predictTestLabel == trueTestLabel) 
     print "Accuracy:",metrics.accuracy_score(trueTestLabel, predictTestLabel), accuracy
     print "F1_micro", f1_score(trueTestLabel, predictTestLabel, average="micro")
-    #target_names=['Conclusie','Klinische gegevens','Title','Verslag','Unknown'
+    class_names=['Conclusion','Clinical Data','Title','Names','Findings']
     print "Test result:",metrics.classification_report(trueTestLabel, predictTestLabel)
-    print "Confusion matrix:",metrics.confusion_matrix(trueTestLabel, predictTestLabel)
+    #conf_mat=metrics.confusion_matrix(trueTestLabel, predictTestLabel)
+    #print conf_mat
+    #fig=confusionmatrix_heatmap.print_confusion_matrix(conf_mat,class_names)
+    #fig.savefig('confMat_3sections_SVM.pdf',bbox_inches="tight")
 
 sentence=[]
 label=[]
@@ -110,6 +118,6 @@ results(predictTestLabelNB, label)
 predictTestLabelSVM=svmfunc(sentence, label)
 print "SVM"
 results(predictTestLabelSVM, label)
-predictTestLabelRF=randomforest(sentence, label)
-print "random forest"
-results(predictTestLabelRF, label)
+#predictTestLabelRF=randomforest(sentence, label)
+#print "random forest"
+#results(predictTestLabelRF, label)
