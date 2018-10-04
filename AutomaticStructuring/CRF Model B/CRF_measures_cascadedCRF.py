@@ -32,11 +32,16 @@ def tokenLevel_measures(predictedY,trueY,tokenList,label_dic):
     #labels2.remove('O')
     measuresprs=precision_recall_fscore_support(trueYflat1,predictedYflat1,labels=labels1)
     #print measuresprs[0]
+    if label_dic=={}:
+        count=0
+    else:
+        count=len(list(label_dic.iteritems()))
     for i in range(len(labels2)):
         #if measuresprs[3][i]<=10:
         #    labels1.remove(labels2[i])
         if not label_dic.has_key(labels2[i]):
-            label_dic[labels2[i]]=[[],[0]]
+            label_dic[labels2[i]]=[[],[0],[count]]
+            count=count+1
         label_dic[labels2[i]][0].append(measuresprs[2][i])
         label_dic[labels2[i]][1]=label_dic[labels2[i]][1]+measuresprs[3][i]
             #measuresprs1=zip(labels1,measuresprs[0],measuresprs[1],measuresprs[2],measuresprs[3])
@@ -60,6 +65,9 @@ def tokenLevel_measures(predictedY,trueY,tokenList,label_dic):
     classificationReport=classification_report(trueYflat1, predictedYflat1, labels=labels1, digits=3)
     print classificationReport
     conf_mat=confusion_matrix(trueYflat1,predictedYflat1, labels=labels1)
+    '''for i in range(len(labels2)):
+        for j in range(len(labels2)):
+            conf_mat_agg[label_dic[labels2[i]][2][0],label_dic[labels2[j]][2][0]]=conf_mat_agg[label_dic[labels2[i]][2][0],label_dic[labels2[j]][2][0]]+conf_mat[i][j]'''
     for i in range(len(labels1)):
         dic_tokenmeasure[labels1[i]]=[measuresprs[0][i],measuresprs[1][i],measuresprs[2][i],measuresprs[3][i]]
     #out.write(str(labels1)+"\n")

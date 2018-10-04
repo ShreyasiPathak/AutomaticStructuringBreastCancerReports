@@ -23,7 +23,9 @@ def test_onPredicted(beg,end,phrase,preLabel,currentNode,currentNode1):
         else:
             preLabelOne='O'
         #data1=preTokenList[j][1]
+        print preLabelOne
         labelStartPres=preLabelOne.split('-')[0]
+        print labelStartPres
         #labelChildStartPres=preLabelTwo.split('-')[0]
         labelEndPres=preLabelOne.split('-')[len(preLabelOne.split('-'))-1]
         #print preLabels
@@ -40,9 +42,9 @@ def test_onPredicted(beg,end,phrase,preLabel,currentNode,currentNode1):
         else:
             labelStartNext=None
         if labelStartPres=='B':
-            beg=i
+            beg1=i
             if labelStartNext=='B' or labelStartNext=='O' or j==len(phrase2)-1:
-                end=i
+                end1=i
                 flag=1
                 child=str(currentNode)+"/"+labelEndPres
                 child1 = SubElement(currentNode1, labelEndPres)
@@ -52,14 +54,14 @@ def test_onPredicted(beg,end,phrase,preLabel,currentNode,currentNode1):
                 or labelEndPres=="mass" or labelEndPres=="calcification" \
                 or labelEndPres=="asymmetry" or labelEndPres=="architectural_distortion" \
                 or child=="report/positive_finding/associated_features" or child=="report/negative_finding/associated_features":
-                    test_onPredicted(beg,end+1,phrase,preLabel,child,child1)
+                    test_onPredicted(beg1,end1+1,phrase,preLabel,child,child1)
                     #print "pf:",preLabel
                 else:
                     #print " ".join(phrase[beg:end+1])
-                    child1.text=" ".join(phrase[beg:end+1])
+                    child1.text=" ".join(phrase[beg1:end1+1])
         elif labelStartPres=='I':
             if labelStartNext=='B' or labelStartNext=='O' or j==len(phrase2)-1:
-                end=i
+                end1=i
                 flag=1
                 child=str(currentNode)+"/"+labelEndPres
                 child1 = SubElement(currentNode1, labelEndPres)
@@ -67,28 +69,30 @@ def test_onPredicted(beg,end,phrase,preLabel,currentNode,currentNode1):
                 or labelEndPres=="mass" or labelEndPres=="calcification" \
                 or labelEndPres=="asymmetry" or labelEndPres=="architectural_distortion" \
                 or child=="report/positive_finding/associated_features" or child=="report/negative_finding/associated_features":
-                    test_onPredicted(beg,end+1,phrase,preLabel,child,child1)
+                    test_onPredicted(beg1,end1+1,phrase,preLabel,child,child1)
                     #print "pf:",preLabel
                 else:
-                    child1.text=" ".join(phrase[beg:end+1])
+                    child1.text=" ".join(phrase[beg1:end1+1])
         if labelStartPres=='O':
             if flag1==0:
-                beg=i
+                beg1=i
                 flag1=1
             #print phrase[i]
             if labelStartNext=='B' or j==len(phrase2)-1:
-                end=i
+                end1=i
                 flag1=0
                 #print phrase[i]
                 if currentNode=="report":
+                    print currentNode1
+                    print phrase[beg1:end1+1]
                     child1=SubElement(currentNode1, labelEndPres)
-                    child1.text=" ".join(phrase[beg:end+1])
+                    child1.text=" ".join(phrase[beg1:end1+1])
                 elif flag==1:
                     #print phrase[beg:end+1]
                     #print "in:",child1
-                    child1.tail=" ".join(phrase[beg:end+1])
+                    child1.tail=" ".join(phrase[beg1:end1+1])
                 elif flag==0:
-                    currentNode1.text=" ".join(phrase[beg:end+1])
+                    currentNode1.text=" ".join(phrase[beg1:end1+1])
                 flag=0
         j=j+1
 
@@ -99,6 +103,7 @@ def mainFunc(tokenList,cascPre):
         test_onPredicted(0,len(tokenList[i]),tokenList[i],cascPre[i],"report",node)
     f=open("predicted_xml",'w')
     #ElementTree(top).write(f)
+    #print prettify(top)
     f.write(prettify(top))
 
 '''top = Element('top')

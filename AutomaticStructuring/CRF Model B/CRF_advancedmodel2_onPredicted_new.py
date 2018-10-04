@@ -18,6 +18,12 @@ from xml.etree.ElementTree import Element, ElementTree
 #from lxml import etree
 #from sklearn.grid_search import RandomizedSearchCV
 
+import seaborn as sns
+import pandas as pd
+import matplotlib
+import matplotlib.pyplot as plt
+from matplotlib.colors import LogNorm
+
 import sklearn_crfsuite
 from sklearn_crfsuite import scorers
 from sklearn_crfsuite import metrics
@@ -500,7 +506,7 @@ def test_onPredicted(beg,end,phrase,preLabels,crfDicKey,currentNode,preLabelLoc)
             preLabels[i][0]='/'.join(preLabels[i][0].split('/')[:len(preLabels[i][0].split('/'))-1])+"/"+preLabelLoc[i][0].split('-')[len(preLabelLoc[i][0].split('-'))-1]
             #print phrase[i]
             #print preLabelLoc[i][0]
-            preLabels[i][1]='/'.join(preLabels[i][0].split('/')[:len(preLabels[i][0].split('/'))-1])+preLabels[i][1]+"/"+preLabelLoc[i][0]
+            preLabels[i][1]='/'.join(preLabels[i][1].split('/')[:len(preLabels[i][1].split('/'))-1])+"/"+preLabelLoc[i][0]
         if labelStartPres=='B':
             beg=i
             if labelStartNext=='B' or labelStartNext=='O' or j==len(preTokenList)-1:
@@ -723,19 +729,20 @@ label_dic_2_pre={}
 label_dic_3_true={}
 label_dic_3_pre={}
 label_dic_C1={}
+conf_mat_agg=np.zeros((34,34))
 out3=open('calcDist_Other_model2.txt','a')
 out2=open('location_Other_model2.txt','a')
 out=open('CRF_advancedmodel2.txt','a')
-for i in range(0,4):
-    if i==0:
+for cvf in range(0,4):
+    if cvf==0:
         list_tree_test=list_tree[:k]
         list_tree_train=list_tree[k:]
-    elif i==len(list_tree)-1:
+    elif cvf==len(list_tree)-1:
         list_tree_test=list_tree[3*k:]
         list_tree_train=list_tree[:3*k]
     else:
-        list_tree_train=list_tree[:i*k]+list_tree[(i+1)*k:]
-        list_tree_test=list_tree[i*k:(i+1)*k]
+        list_tree_train=list_tree[:cvf*k]+list_tree[(cvf+1)*k:]
+        list_tree_test=list_tree[cvf*k:(cvf+1)*k]
         
     root=Element('radiology_reports')
     root1=Element('radiology_reports')
@@ -745,8 +752,8 @@ for i in range(0,4):
         root1.append(list_tree_elem)
     tree=ElementTree(root)
     tree1=ElementTree(root1)
-    tree.write('./../labeling/train_shuffled'+str(i)+'.xml')
-    tree1.write('./../labeling/test_shuffled'+str(i)+'.xml')
+    tree.write('./../labeling/train_shuffled'+str(cvf)+'.xml')
+    tree1.write('./../labeling/test_shuffled'+str(cvf)+'.xml')
 
     #root=tree.getroot()
     dicListPre={}
@@ -781,7 +788,7 @@ for i in range(0,4):
     crfDic['positive_finding']=crf1
     if type(predicted2_Te) is not list:
         predicted2_Te=predicted2_Te.tolist()
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted2,y2,tokenList2)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted2_Te,y2_Te,tokenList2_Te,label_dic_C1)
     dicListPre['report/positive_finding']=predicted2_Te
     dicListTrue['report/positive_finding']=y2_Te
     
@@ -796,7 +803,7 @@ for i in range(0,4):
     crfDic['negative_finding']=crf1
     if type(predicted3_Te) is not list:
         predicted3_Te=predicted3_Te.tolist()
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted3,y3,tokenList3)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted3_Te,y3_Te,tokenList3_Te,label_dic_C1)
     dicListPre['report/negative_finding']=predicted3_Te
     dicListTrue['report/negative_finding']=y3_Te
     #print zip(tokenList3,predicted3)
@@ -843,7 +850,7 @@ for i in range(0,4):
     crfDic['pfnf']=crf1
     if type(predicted4_Te) is not list:
         predicted4_Te=predicted4_Te.tolist()
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted4,y4,tokenList4)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted4_Te,y4_Te,tokenList4_Te,label_dic_C1)
     #out2=open('location_Other_model2.txt','a')
     for data1,true1,pre1 in zip(tokenList4_Te,y4_Te,predicted4_Te):
         for i in range(0,len(data1)):
@@ -875,7 +882,7 @@ for i in range(0,4):
     if type(predicted5_Te) is not list:
         predicted5_Te=predicted5_Te.tolist()
     #print predicted5
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted5,y5,tokenList5)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted5_Te,y5_Te,tokenList5_Te,label_dic_C1)
     
     #CRF6=>size and other classifier, input: all positive_finding -> mass, calcification & asymmetry
     print "CRF6"
@@ -907,7 +914,7 @@ for i in range(0,4):
     crfDic['pf/mass_calc_asym']=crf1
     if type(predicted6_Te) is not list:
         predicted6_Te=predicted6_Te.tolist()
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted6,y6,tokenList6)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted6_Te,y6_Te,tokenList6_Te,label_dic_C1)
     #out3=open('size_Other_model2.txt','w')'''
     '''for data1,true1,pre1 in zip(tokenList3,y3,predicted3):
         for i in range(0,len(data1)):
@@ -932,7 +939,7 @@ for i in range(0,4):
     crfDic['pf/mass']=crf1
     if type(predicted7_Te) is not list:
         predicted7_Te=predicted7_Te.tolist()
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted7,y7,tokenList7)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted7_Te,y7_Te,tokenList7_Te,label_dic_C1)
     
     #CRF8=>morphology, distribution and other classifier, input: all positive_finding, negative finding -> calcification
     print "CRF8"
@@ -962,7 +969,7 @@ for i in range(0,4):
         for i in range(0,len(data1)):
             if data1[i] not in string.punctuation:
                 out3.write(str(data1[i])+"\t"+str(true1[i])+"\t"+str(pre1[i])+"\n")
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted8,y8,tokenList8)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted8_Te,y8_Te,tokenList8_Te,label_dic_C1)
     
     #CRF9=>associated features and other classifier, input: all positive_finding
     print "CRF9"
@@ -1000,7 +1007,7 @@ for i in range(0,4):
     crfDic['pf/asso']=crf1
     if type(predicted9_Te) is not list:
         predicted9_Te=predicted9_Te.tolist()
-    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted9,y9,tokenList9)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predicted9_Te,y9_Te,tokenList9_Te,label_dic_C1)
     
     masspfNodes_count=len(tree1.findall("./report/positive_finding/mass"))
     massPfMargin=prob_all_5[:masspfNodes_count]
@@ -1300,13 +1307,14 @@ for i in range(0,4):
                 lastLevelPreLabel=str(TruePreLabels[i][j][1].split('/')[len(TruePreLabels[i][j][1].split('/'))-1])
             if len(trueLabel)>=2:
                 truePredicted=trueLabel[0]+"/"+truePredict[1]
+                truePredicted1.append(truePredicted)
+            if len(trueLabel)>=2 or len(cascPre)>=2:
                 predictPredict="/".join(cascPre[:2])
                 trueLabel_2labels="/".join(trueLabel[:2])
                 #if trueLabel_2labels=="negative_finding/O":
                 #    print predictPredict
                 #    print truePredicted
                 tokenFor2level.append(tokenList1_Te[i][j])
-                truePredicted1.append(truePredicted)
                 predictPredict1.append(predictPredict)
                 trueLabel_2labels1.append(trueLabel_2labels)
                 
@@ -1373,22 +1381,56 @@ for i in range(0,4):
     #level_3 on true (true/true/predict)
     #CRF_measures_cascadedCRF.tokenLevel_measures(truetruePredictedList1,trueLabel_3labelsList1,tokenFor3levelList1,label_dic_3_true)
     #level_3 on predict (predict/predict/predict)
-    CRF_measures_cascadedCRF.tokenLevel_measures(predictpredictPredictList1,trueLabel_3labelsList1,tokenFor3levelList1,label_dic_3_pre)
+    #CRF_measures_cascadedCRF.tokenLevel_measures(predictpredictPredictList1,trueLabel_3labelsList1,tokenFor3levelList1,label_dic_3_pre)
     #print docs1_Te_ori
-    #labeling_to_xml.mainFunc(docs1_Te_ori,cascPreList1)
+    if cvf==3:
+        print "hi"
+        labeling_to_xml.mainFunc(docs1_Te_ori,cascPreList1)
 
+'''label_dic_abb={'O':'O','breast_composition':'BC','positive_finding/mass/location':'PF/MS/L','positive_finding/mass/size':'PF/MS/SI','positive_finding/mass/margin':'PF/MS/MA','positive_finding/mass/density':'PF/MS/DE','positive_finding/mass/associated_features':'PF/MS/AF','positive_finding/mass/shape':'PF/MS/SH','positive_finding/mass/O':'PF/MS/O','positive_finding/calcification/location':'PF/C/L',\
+               'positive_finding/calcification/size':'PF/C/SI','positive_finding/calcification/morphology':'PF/C/MO','positive_finding/calcification/distribution':'PF/C/DI','positive_finding/calcification/associated_features':'PF/C/AF','positive_finding/calcification/O':'PF/C/O','positive_finding/architectural_distortion/location':'PF/AD/L','positive_finding/architectural_distortion/associated_features':'PF/AD/AF',\
+               'positive_finding/architectural_distortion/O':'PF/AD/O','positive_finding/associated_features/location':'PF/AF/L','positive_finding/associated_features/O':'PF/AF/O','positive_finding/asymmetry/location':'PF/AS/L','positive_finding/asymmetry/size':'PF/AS/SI','positive_finding/asymmetry/associated_features':'PF/AS/AF','positive_finding/asymmetry/O':'PF/AS/O','negative_finding/mass/location':'NF/MS/L',\
+               'negative_finding/mass/margin':'NF/MS/MA','negative_finding/mass/O':'NF/MS/O','negative_finding/calcification/location':'NF/C/L','negative_finding/calcification/morphology':'NF/C/MO','negative_finding/calcification/distribution':'NF/C/DI','negative_finding/calcification/O':'NF/C/O','negative_finding/architectural_distortion/location':'NF/AD/L','negative_finding/architectural_distortion/O':'NF/AD/O',\
+               'negative_finding/associated_features/location':'NF/AF/L','negative_finding/associated_features/O':'NF/AF/O','negative_finding/asymmetry/location':'NF/AS/L','negative_finding/asymmetry/O':'NF/AS/O','negative_finding/location':'NF/L','negative_finding/O':'NF/O'}
+label_dic1={}
+for key in label_dic_all.iterkeys():
+    label_dic1[label_dic_abb[key]]=label_dic_all[key][2][0]
+
+axis_labels=sorted(label_dic1,key=label_dic1.__getitem__)
+conf_mat_agg=conf_mat_agg.astype(int)
+#print conf_mat_agg
+conf_mat_agg_norm=(np.zeros((34,34))).astype('float')
+for i in range(len(conf_mat_agg)):
+    s=np.sum(conf_mat_agg[i,:])
+    for j in range(len(conf_mat_agg[i])):
+        conf_mat_agg_norm[i,j]=float(conf_mat_agg[i,j])/s
+sns.set()
+f=plt.figure(figsize=(8,5))
+sns.heatmap(
+        yticklabels=axis_labels,
+        xticklabels=axis_labels,
+        data=conf_mat_agg_norm,
+        cmap='YlGnBu',
+        #annot=True,
+        #fmt="d",
+        linewidths=0.75)
+#plt.tight_layout()
+plt.ylabel('True label')
+plt.xlabel('Predicted label')
+#plt.show()
+f.savefig("ConfusionMatrixHeatmap_modelB.pdf",bbox_inches='tight')'''
 '''label_dic2_fscore={}
 label_dic2_support={}
-for key in label_dic_all.iterkeys():
-    label_dic2_fscore[key]=float(sum(label_dic_all[key][0]))/len(label_dic_all[key][0])
-    label_dic2_support[key]=label_dic_all[key][1][0]
+for key in label_dic_2_pre.iterkeys():
+    label_dic2_fscore[key]=float(sum(label_dic_2_pre[key][0]))/len(label_dic_2_pre[key][0])
+    label_dic2_support[key]=label_dic_2_pre[key][1][0]
 print label_dic2_fscore
 print label_dic2_support'''
 
 '''label_dic_2_fscore={}
 label_dic_2_support={}
-for key in label_dic_C1.iterkeys():
-    label_dic_2_fscore[key]=float(sum(label_dic_C1[key][0]))/len(label_dic_C1[key][0])
-    label_dic_2_support[key]=label_dic_C1[key][1][0]
+for key in label_dic_all.iterkeys():
+    label_dic_2_fscore[key]=float(sum(label_dic_all[key][0]))/len(label_dic_all[key][0])
+    label_dic_2_support[key]=label_dic_all[key][1][0]
 print label_dic_2_fscore
 print label_dic_2_support'''
