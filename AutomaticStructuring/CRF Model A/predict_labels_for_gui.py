@@ -128,7 +128,7 @@ def mainFunc(path_to_prediction_report):
     global crfDic
     
     #load models
-    models_path="CRFmodel1_models.pkl"
+    models_path="CRFmodelA_models.pkl"
     models_file=open(models_path,'rb')
     crfDic=pickle.load(models_file)
     
@@ -202,5 +202,6 @@ def mainFunc(path_to_prediction_report):
     
     labeling_to_xml.mainFunc(docs_ori,cascPreList1)
 
-path='./../labeling/testSample_predict.xml'
+#example of how to call the function mainFunc
+path='./../labeling/testSample_predict.xml' #path to the xml file which contains the report to be labeled
 mainFunc(path)
