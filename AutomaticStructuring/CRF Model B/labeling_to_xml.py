@@ -23,9 +23,9 @@ def test_onPredicted(beg,end,phrase,preLabel,currentNode,currentNode1):
         else:
             preLabelOne='O'
         #data1=preTokenList[j][1]
-        print preLabelOne
+        #print preLabelOne
         labelStartPres=preLabelOne.split('-')[0]
-        print labelStartPres
+        #print labelStartPres
         #labelChildStartPres=preLabelTwo.split('-')[0]
         labelEndPres=preLabelOne.split('-')[len(preLabelOne.split('-'))-1]
         #print preLabels
@@ -83,8 +83,8 @@ def test_onPredicted(beg,end,phrase,preLabel,currentNode,currentNode1):
                 flag1=0
                 #print phrase[i]
                 if currentNode=="report":
-                    print currentNode1
-                    print phrase[beg1:end1+1]
+                    #print currentNode1
+                    #print phrase[beg1:end1+1]
                     child1=SubElement(currentNode1, labelEndPres)
                     child1.text=" ".join(phrase[beg1:end1+1])
                 elif flag==1:
@@ -101,24 +101,7 @@ def mainFunc(tokenList,cascPre):
     for i in range(len(tokenList)):
         node=SubElement(top,"report")
         test_onPredicted(0,len(tokenList[i]),tokenList[i],cascPre[i],"report",node)
-    f=open("predicted_xml",'w')
+    f=open("testSample2_predicted_output.xml",'w')
     #ElementTree(top).write(f)
     #print prettify(top)
     f.write(prettify(top))
-
-'''top = Element('top')
-
-comment = Comment('Generated for PyMOTW')
-top.append(comment)
-
-child = SubElement(top, 'child')
-child.text = 'This child contains text.'
-
-child_with_tail = SubElement(top, 'child')
-child_with_tail.text = 'This child has regular text.'
-child_with_tail.tail = 'And "tail" text.'
-
-child_with_entity_ref = SubElement(top, 'child_with_entity_ref')
-child_with_entity_ref.text = 'This & that'
-
-print prettify(top)'''

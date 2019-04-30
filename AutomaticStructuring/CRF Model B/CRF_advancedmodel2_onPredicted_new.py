@@ -1,3 +1,4 @@
+#this is the final training file for CRF model B
 import xml.etree.cElementTree as Elem
 
 import re
@@ -8,6 +9,7 @@ import itertools
 from random import shuffle
 import operator
 import numpy as np
+import pickle
 
 import sklearn
 from sklearn.model_selection import KFold
@@ -733,6 +735,9 @@ conf_mat_agg=np.zeros((34,34))
 out3=open('calcDist_Other_model2.txt','a')
 out2=open('location_Other_model2.txt','a')
 out=open('CRF_advancedmodel2.txt','a')
+pickle_filename='CRFmodelB_trainedmodel.pkl'
+pickle_path=open(pickle_filename,'wb')
+best_f1micro=0
 for cvf in range(0,4):
     if cvf==0:
         list_tree_test=list_tree[:k]
@@ -1371,7 +1376,7 @@ for cvf in range(0,4):
         tokenFor3levelList1.append(tokenFor3level)
     #CRF_measures_cascadedCRF.tokenLevel_measures(preList,trueList,tokenList1_Te)
     #print count
-    #CRF_measures_cascadedCRF.tokenLevel_measures(cascPreList,trueList,tokenList1_Te,label_dic_all)
+    f1micro,dic_metric=CRF_measures_cascadedCRF.tokenLevel_measures(cascPreList,trueList,tokenList1_Te,label_dic_all)
     #global labels predicted on true values (comparison between true/true/predicted & cascaded predicted/predicted/predicted)
     #CRF_measures_cascadedCRF.tokenLevel_measures(lastLevelPreList,trueList,tokenList1_Te)
     #Level_2 on true (true/predict)
@@ -1383,9 +1388,13 @@ for cvf in range(0,4):
     #level_3 on predict (predict/predict/predict)
     #CRF_measures_cascadedCRF.tokenLevel_measures(predictpredictPredictList1,trueLabel_3labelsList1,tokenFor3levelList1,label_dic_3_pre)
     #print docs1_Te_ori
-    if cvf==3:
-        print "hi"
-        labeling_to_xml.mainFunc(docs1_Te_ori,cascPreList1)
+    if f1micro>best_f1micro:
+        best_f1micro=f1micro
+        bestcrf_model=crfDic
+pickle.dump(bestcrf_model,pickle_path)
+    # if cvf==3:
+    #     print "hi"
+    #     labeling_to_xml.mainFunc(docs1_Te_ori,cascPreList1)
 
 '''label_dic_abb={'O':'O','breast_composition':'BC','positive_finding/mass/location':'PF/MS/L','positive_finding/mass/size':'PF/MS/SI','positive_finding/mass/margin':'PF/MS/MA','positive_finding/mass/density':'PF/MS/DE','positive_finding/mass/associated_features':'PF/MS/AF','positive_finding/mass/shape':'PF/MS/SH','positive_finding/mass/O':'PF/MS/O','positive_finding/calcification/location':'PF/C/L',\
                'positive_finding/calcification/size':'PF/C/SI','positive_finding/calcification/morphology':'PF/C/MO','positive_finding/calcification/distribution':'PF/C/DI','positive_finding/calcification/associated_features':'PF/C/AF','positive_finding/calcification/O':'PF/C/O','positive_finding/architectural_distortion/location':'PF/AD/L','positive_finding/architectural_distortion/associated_features':'PF/AD/AF',\
