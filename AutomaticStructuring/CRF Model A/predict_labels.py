@@ -128,7 +128,7 @@ def mainFunc(path_to_prediction_report):
     global crfDic
     
     #load models
-    models_path="CRFmodelA_models.pkl"
+    models_path="CRFmodelA_trainedmodel.pkl"
     models_file=open(models_path,'rb')
     crfDic=pickle.load(models_file)
     
