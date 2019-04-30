@@ -29,15 +29,29 @@ labeling_to_xml.py: Converting the predicted labels to a pretty XML format and s
 predict_labels.py: Can be used by any user to predict the structure of free-text mammography report. Call the function mainFunc.
 CRFmodelA_trainedmodel.pkl and CRFmodelB_trainedmodel.pkl: Contains the trained model on Dutch mammography dataset
 
+## Required Python Packages 
+Python 2.7  
+sklearn_crfsuite  
+numpy  
+seaborn  
+matplotlib  
+pandas  
+nltk  
+pickle  
+xml  
+
 ## Paper
-[Automatic Structuring of Breast Cancer for Radiology Reports for Quality Assurance](https://ieeexplore.ieee.org/abstract/document/8637387)
-For more details on the work, please refer to this [masters thesis](https://essay.utwente.nl/76327/)
+This work has been published as a paper ["Automatic Structuring of Breast Cancer for Radiology Reports for Quality Assurance"](https://ieeexplore.ieee.org/abstract/document/8637387).  
+For more details on the work, please refer to this [masters thesis](https://essay.utwente.nl/76327/).
 
 **Citation:**  
 Chicago citation:  
+```
 Pathak, Shreyasi, Jorit van Rossen, Onno Vijlbrief, Jeroen Geerdink, Christin Seifert, and Maurice van Keulen. "Automatic Structuring of Breast Cancer Radiology Reports for Quality Assurance." In 2018 IEEE International Conference on Data Mining Workshops (ICDMW), pp. 732-739. IEEE, 2018.
+```
 
 Bibtex:  
+```
 @inproceedings{pathak2018automatic,
   title={Automatic Structuring of Breast Cancer Radiology Reports for Quality Assurance},
   author={Pathak, Shreyasi and van Rossen, Jorit and Vijlbrief, Onno and Geerdink, Jeroen and Seifert, Christin and van Keulen, Maurice},
@@ -46,3 +60,4 @@ Bibtex:
   year={2018},
   organization={IEEE}
 }
+```
