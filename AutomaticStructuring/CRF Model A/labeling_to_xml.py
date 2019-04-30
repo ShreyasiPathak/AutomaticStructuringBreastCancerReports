@@ -101,7 +101,7 @@ def mainFunc(tokenList,cascPre):
     for i in range(len(tokenList)):
         node=SubElement(top,"report")
         test_onPredicted(0,len(tokenList[i]),tokenList[i],cascPre[i],"report",node)
-    f=open("testSample2_predicted_output.xml",'w')
+    f=open("testSample_predicted_output.xml",'w')
     #ElementTree(top).write(f)
     #print prettify(top)
     f.write(prettify(top))
