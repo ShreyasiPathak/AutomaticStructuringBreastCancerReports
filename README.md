@@ -42,7 +42,7 @@ xml
 
 ## Paper
 This work has been published as a paper ["Automatic Structuring of Breast Cancer for Radiology Reports for Quality Assurance"](https://ieeexplore.ieee.org/abstract/document/8637387).  
-For more details on the work, please refer to this [masters thesis](https://essay.utwente.nl/76327/).
+For more details on the work, please refer to this [master's thesis](https://essay.utwente.nl/76327/).
 
 **Citation:**  
 Chicago citation:  
