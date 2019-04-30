@@ -203,5 +203,5 @@ def mainFunc(path_to_prediction_report):
     labeling_to_xml.mainFunc(docs_ori,cascPreList1)
 
 #example of how to call the function mainFunc
-path='./../labeling/testSample_input.xml' #path to the xml file which contains the report to be labeled
+path='./../data/testSample_input.xml' #path to the xml file which contains the report to be labeled
 mainFunc(path)
