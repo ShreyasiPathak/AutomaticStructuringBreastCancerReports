@@ -395,7 +395,7 @@ label_dic_2_pre={}
 label_dic_3_true={}
 label_dic_3_pre={}
 conf_mat_agg=np.zeros((34,34))
-pickle_filename='CRFmodelA_models.pkl'
+pickle_filename='CRFmodelA_trainedmodel.pkl'
 pickle_path=open(pickle_filename,'wb')
 best_f1micro=0
 for i in range(0,4):
