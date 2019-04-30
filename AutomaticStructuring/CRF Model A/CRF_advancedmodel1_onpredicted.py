@@ -395,6 +395,9 @@ label_dic_2_pre={}
 label_dic_3_true={}
 label_dic_3_pre={}
 conf_mat_agg=np.zeros((34,34))
+pickle_filename='CRFmodelA_models.pkl'
+pickle_path=open(pickle_filename,'wb')
+best_f1micro=0
 for i in range(0,4):
     if i==0:
         list_tree_test=list_tree[:k]
@@ -586,7 +589,7 @@ for i in range(0,4):
     #global labels predicted on true values
     #CRF_measures_cascadedCRF.tokenLevel_measures(preList,trueList,tokenListAll)
     #global labels predicted on predicted values--->cascaded prediction used
-    CRF_measures_cascadedCRF.tokenLevel_measures(cascPreList,trueList,tokenListAll,label_dic_all,conf_mat_agg)
+    f1micro,dic_metric=CRF_measures_cascadedCRF.tokenLevel_measures(cascPreList,trueList,tokenListAll,label_dic_all,conf_mat_agg)
     #global labels predicted on true values (comparison between true/true/predicted & cascaded predicted/predicted/predicted)
     #CRF_measures_cascadedCRF.tokenLevel_measures(lastLevelPreList,trueList,tokenListAll)
     #Level_2 on true (true/predict)
@@ -604,17 +607,20 @@ for i in range(0,4):
     #predicted_1=crfDic['report/positive_finding'].predict([X_1])
     #print crfDic['report/positive_finding'].predict_marginals([X_1])
     #print predicted_1
-
+    if f1micro>best_f1micro:
+        best_f1micro=f1micro
+        bestcrf_model=crfDic
+pickle.dump(bestcrf_model,pickle_path)
 #np.set_printoptions(threshold=np.nan, suppress=True,linewidth=100)
 #print conf_mat_agg
 #label_dic1={}
 #for key in label_dic_all.iterkeys():
 #    label_dic1[key]=conf_mat_agg[label_dic_all[key][2][0]]
 #print label_dic1
-pickle_filename='CRFmodelA_models.pkl'
-pickle_path=open(pickle_filename,'wb')
-pickle.dump(crfDic,pickle_path)
-label_dic_abb={'O':'O','breast_composition':'BC','positive_finding/mass/location':'PF/MS/L','positive_finding/mass/size':'PF/MS/SI','positive_finding/mass/margin':'PF/MS/MA','positive_finding/mass/density':'PF/MS/DE','positive_finding/mass/associated_features':'PF/MS/AF','positive_finding/mass/shape':'PF/MS/SH','positive_finding/mass/O':'PF/MS/O','positive_finding/calcification/location':'PF/C/L',\
+#print crfDic
+
+    
+'''label_dic_abb={'O':'O','breast_composition':'BC','positive_finding/mass/location':'PF/MS/L','positive_finding/mass/size':'PF/MS/SI','positive_finding/mass/margin':'PF/MS/MA','positive_finding/mass/density':'PF/MS/DE','positive_finding/mass/associated_features':'PF/MS/AF','positive_finding/mass/shape':'PF/MS/SH','positive_finding/mass/O':'PF/MS/O','positive_finding/calcification/location':'PF/C/L',\
                'positive_finding/calcification/size':'PF/C/SI','positive_finding/calcification/morphology':'PF/C/MO','positive_finding/calcification/distribution':'PF/C/DI','positive_finding/calcification/associated_features':'PF/C/AF','positive_finding/calcification/O':'PF/C/O','positive_finding/architectural_distortion/location':'PF/AD/L','positive_finding/architectural_distortion/associated_features':'PF/AD/AF',\
                'positive_finding/architectural_distortion':'PF/AD/O','positive_finding/associated_features/location':'PF/AF/L','positive_finding/associated_features/O':'PF/AF/O','positive_finding/asymmetry/location':'PF/AS/L','positive_finding/asymmetry/size':'PF/AS/SI','positive_finding/asymmetry/associated_features':'PF/AS/AF','positive_finding/asymmetry/O':'PF/AS/O','negative_finding/mass/location':'NF/MS/L',\
                'negative_finding/mass/margin':'NF/MS/MA','negative_finding/mass/O':'NF/MS/O','negative_finding/calcification/location':'NF/C/L','negative_finding/calcification/morphology':'NF/C/MO','negative_finding/calcification/distribution':'NF/C/DI','negative_finding/calcification/O':'NF/C/O','negative_finding/architectural_distortion/location':'NF/AD/L','negative_finding/architectural_distortion/O':'NF/AD/O',\
@@ -644,7 +650,8 @@ sns.heatmap(
 #plt.tight_layout()
 plt.ylabel('True label')
 plt.xlabel('Predicted label')
-f.savefig("ConfusionMatrixHeatmap_modelA.pdf",bbox_inches='tight')
+f.savefig("ConfusionMatrixHeatmap_modelA.pdf",bbox_inches='tight')'''
+
 #plt.show()'''
 '''label_dic2_fscore={}
 label_dic2_support={}

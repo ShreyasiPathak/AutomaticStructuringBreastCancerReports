@@ -77,7 +77,7 @@ def tokenLevel_measures(predictedY,trueY,tokenList,label_dic, conf_mat_agg):
     accuracy=accuracy_score(trueYflat1, predictedYflat1)
     #print measuresprs1
     print "Accuracy:", accuracy
-    return dic_tokenmeasure
+    return F1score_micro, dic_tokenmeasure
 
 def partialPhraseLevel_measures(tokensList,predictedY,trueY):
     phraseList=[]

@@ -101,24 +101,7 @@ def mainFunc(tokenList,cascPre):
     for i in range(len(tokenList)):
         node=SubElement(top,"report")
         test_onPredicted(0,len(tokenList[i]),tokenList[i],cascPre[i],"report",node)
-    f=open("testSample_predicted_xml",'w')
+    f=open("testSample2_predicted_output.xml",'w')
     #ElementTree(top).write(f)
     #print prettify(top)
     f.write(prettify(top))
-
-'''top = Element('top')
-
-comment = Comment('Generated for PyMOTW')
-top.append(comment)
-
-child = SubElement(top, 'child')
-child.text = 'This child contains text.'
-
-child_with_tail = SubElement(top, 'child')
-child_with_tail.text = 'This child has regular text.'
-child_with_tail.tail = 'And "tail" text.'
-
-child_with_entity_ref = SubElement(top, 'child_with_entity_ref')
-child_with_entity_ref.text = 'This & that'
-
-print prettify(top)'''

@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<radiology_reports>
+  <report>
+    <O>X - mammografie beiderzijds :</O>
+    <positive_finding>
+      <mass>
+        Een
+        <margin>stervormige</margin>
+        laesie
+        <location>laterale bovenkwadrant linkermamma ,</location>
+        De laesie heeft een body van
+        <size>ongeveer 2 , 3 cm ,</size>
+        De laesie is wel moeilijk af te grenzen van het normale klierweefsel ,
+      </mass>
+    </positive_finding>
+    <negative_finding>
+      <calcification>
+        In en rondom de laesie geen
+        <morphology>microcalcificaties ,</morphology>
+        In de rechtermamma voor zover te beoordelen geen aanwijzingen voor maligniteit ,
+      </calcification>
+      <associated_features>Axillair beiderzijds geen pathologische lymfeklieren zichtbaar ,</associated_features>
+    </negative_finding>
+  </report>
+</radiology_reports>
